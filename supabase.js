@@ -38,33 +38,7 @@ async function loadCustomersFromSupabase(){
 
 }
 
-async function addCustomerToSupabase(
-    name
-){
 
-    const { error } =
-    await supabaseClient
-    .from("customers")
-    .insert([
-        {
-            name:name
-        }
-    ]);
-
-    if(error){
-
-        console.error(
-            "新增客戶失敗",
-            error
-        );
-
-        return false;
-
-    }
-
-    return true;
-
-}
 
 async function addCustomerToSupabase(name){
 
@@ -235,43 +209,7 @@ async function updateProductInSupabase(
 
 }
 
-async function deleteProductFromSupabase(
-    category,
-    name
-){
 
-    const { error } =
-    await supabaseClient
-    .from("products")
-    .delete()
-    .eq(
-        "category",
-        category
-    )
-    .eq(
-        "name",
-        name
-    );
-
-    console.log(
-        "商品刪除結果",
-        error
-    );
-
-    if(error){
-
-        console.error(
-            "刪除商品失敗",
-            error
-        );
-
-        return false;
-
-    }
-
-    return true;
-
-}
 
 async function saveOrderToSupabase(order){
 
@@ -469,4 +407,26 @@ async function deleteOrderFromSupabase(orderId){
 
     return true;
 
+}
+
+async function deleteProductFromSupabase(category,name){
+
+    const { error } =
+    await supabaseClient
+    .from("products")
+    .delete()
+    .eq("category", category)
+    .eq("name", name);
+
+    console.log(
+        "商品刪除結果",
+        error
+    );
+
+    if(error){
+        console.error("刪除商品失敗", error);
+        return false;
+    }
+
+    return true;
 }

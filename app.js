@@ -566,6 +566,45 @@ async function renameProduct(category,name){
 
 }
 
+async function deleteProduct(category,name){
+
+    const confirmDelete =
+    confirm(`確定刪除 ${name} 嗎？`);
+
+    if(!confirmDelete) return;
+
+    const success =
+    await deleteProductFromSupabase(
+        category,
+        name
+    );
+
+    if(!success){
+
+        alert("刪除失敗");
+
+        return;
+
+    }
+
+    recentProducts =
+    recentProducts.filter(
+        item=>item !== name
+    );
+
+    localStorage.setItem(
+        "recentProducts",
+        JSON.stringify(recentProducts)
+    );
+
+    await initProducts();
+
+    renderRecentProducts();
+
+    alert("商品刪除成功");
+
+}
+
 function deleteCustomer(name){
 
     const confirmDelete =
@@ -1191,7 +1230,7 @@ ${
 
 <button
     class="delete-history-btn"
-    onclick="deleteHistoryOrder('${order.id}')">
+    onclick="deleteHistoryOrder('${order.id}')"
     刪除此筆
 </button>
 
