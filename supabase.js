@@ -433,34 +433,29 @@ async function deleteProductFromSupabase(category,name){
 
 async function deleteCustomerFromSupabase(name){
 
-    const { error } =
+    const targetName =
+    name.trim();
+
+    const { data, error } =
     await supabaseClient
     .from("customers")
     .delete()
-    .eq("name", name);
+    .eq("name", targetName)
+    .select();
 
-    console.log("客戶刪除結果", error);
+    console.log(
+        "客戶刪除結果",
+        data,
+        error
+    );
 
     if(error){
         console.error("刪除客戶失敗", error);
         return false;
     }
 
-    return true;
-}
-
-async function deleteCustomerFromSupabase(name){
-
-    const { error } =
-    await supabaseClient
-    .from("customers")
-    .delete()
-    .eq("name", name);
-
-    console.log("客戶刪除結果", error);
-
-    if(error){
-        console.error("刪除客戶失敗", error);
+    if(!data || data.length === 0){
+        console.warn("沒有刪到任何客戶", targetName);
         return false;
     }
 

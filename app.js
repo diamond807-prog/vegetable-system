@@ -1219,7 +1219,7 @@ ${
 
 <button
     class="delete-history-btn"
-    onclick="deleteHistoryOrder('${order.id}')"
+    onclick="deleteHistoryOrder('${order.id}')">
     刪除此筆
 </button>
 
