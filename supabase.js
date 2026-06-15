@@ -448,3 +448,21 @@ async function deleteCustomerFromSupabase(name){
 
     return true;
 }
+
+async function deleteCustomerFromSupabase(name){
+
+    const { error } =
+    await supabaseClient
+    .from("customers")
+    .delete()
+    .eq("name", name);
+
+    console.log("客戶刪除結果", error);
+
+    if(error){
+        console.error("刪除客戶失敗", error);
+        return false;
+    }
+
+    return true;
+}

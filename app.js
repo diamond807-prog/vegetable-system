@@ -621,14 +621,8 @@ async function deleteCustomer(name){
     }
 
     if(currentCustomer === name){
-
         currentCustomer = "";
-
-        localStorage.setItem(
-            "currentCustomer",
-            currentCustomer
-        );
-
+        localStorage.setItem("currentCustomer", currentCustomer);
     }
 
     await initCustomers();
