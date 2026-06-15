@@ -605,22 +605,24 @@ async function deleteProduct(category,name){
 
 }
 
-function deleteCustomer(name){
+async function deleteCustomer(name){
 
     const confirmDelete =
     confirm(`確定刪除 ${name} 嗎？`);
 
     if(!confirmDelete) return;
 
-    customerStore =
-    customerStore.filter(
-        item => item !== name
-    );
+    const success =
+    await deleteCustomerFromSupabase(name);
+
+    if(!success){
+        alert("刪除失敗");
+        return;
+    }
 
     if(currentCustomer === name){
 
-        currentCustomer =
-        customerStore[0] || "";
+        currentCustomer = "";
 
         localStorage.setItem(
             "currentCustomer",
@@ -629,14 +631,7 @@ function deleteCustomer(name){
 
     }
 
-    localStorage.setItem(
-        "customerStore",
-        JSON.stringify(customerStore)
-    );
-
-    loadCustomers();
-    renderManageCustomerList();
-    updateCurrentCustomerBox();
+    await initCustomers();
 
     alert("客戶刪除成功");
 
