@@ -1218,9 +1218,14 @@ ${
 </div>
 
 <button
+    onclick="copyHistoryReceipt('${order.id}')">
+    📋重印
+</button>
+
+<button
     class="delete-history-btn"
     onclick="deleteHistoryOrder('${order.id}')">
-    刪除此筆
+    🗑️刪除
 </button>
 
 <div class="history-detail">
@@ -1267,6 +1272,33 @@ function buildReceiptText(order){
     text += `合計：$${order.total}`;
 
     return text;
+
+}
+
+async function copyHistoryReceipt(id){
+
+    const order =
+    historyOrders.find(
+        item => String(item.id) === String(id)
+    );
+
+    if(!order){
+
+        alert("找不到出貨單");
+
+        return;
+
+    }
+
+    const text =
+    buildReceiptText(order);
+
+    await navigator.clipboard
+    .writeText(text);
+
+    alert(
+        "出貨單已複製\n可直接貼到 Fun Print"
+    );
 
 }
 
