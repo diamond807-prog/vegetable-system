@@ -1257,9 +1257,9 @@ ${
 </div>
 
 <button
-    class="delete-history-btn hidden-delete"
+    class="delete-history-btn"
     onclick="deleteHistoryOrder('${order.id}')">
-    🗑️刪除訂單
+    🗑️刪除
 </button>
 
 <div class="history-detail">
@@ -1270,76 +1270,40 @@ ${
         card.addEventListener("click",()=>{
             card.querySelector(".history-detail").classList.toggle("show");
         });
+let touchStartX = 0;
+let touchEndX = 0;
 
+card.addEventListener("touchstart",(event)=>{
+
+    touchStartX =
+    event.changedTouches[0].screenX;
+
+});
+
+card.addEventListener("touchend",(event)=>{
+
+    touchEndX =
+    event.changedTouches[0].screenX;
+
+    if(touchStartX - touchEndX > 60){
+
+        card.classList.add("swipe-delete");
+
+    }
+
+    if(touchEndX - touchStartX > 60){
+
+        card.classList.remove("swipe-delete");
+
+    }
+
+});
         historyList.appendChild(card);
     });
 
     let pressTimer;
 
-card.addEventListener(
-    "mousedown",
-    ()=>{
 
-        pressTimer =
-        setTimeout(()=>{
-
-            card.classList.toggle(
-                "show-delete"
-            );
-
-        },2000);
-
-    }
-);
-
-card.addEventListener(
-    "mouseup",
-    ()=>{
-
-        clearTimeout(
-            pressTimer
-        );
-
-    }
-);
-
-card.addEventListener(
-    "mouseleave",
-    ()=>{
-
-        clearTimeout(
-            pressTimer
-        );
-
-    }
-);
-
-card.addEventListener(
-    "touchstart",
-    ()=>{
-
-        pressTimer =
-        setTimeout(()=>{
-
-            card.classList.toggle(
-                "show-delete"
-            );
-
-        },2000);
-
-    }
-);
-
-card.addEventListener(
-    "touchend",
-    ()=>{
-
-        clearTimeout(
-            pressTimer
-        );
-
-    }
-);
 }
 
 

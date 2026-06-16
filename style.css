@@ -686,3 +686,34 @@ input{
     margin-top:10px;
 
 }
+
+.history-card{
+    position:relative;
+    overflow:hidden;
+}
+
+.delete-history-btn{
+    margin-top:8px;
+    font-size:12px;
+    opacity:0.65;
+}
+
+/* 手機版：刪除鍵先藏起來 */
+@media (max-width: 768px){
+
+    .history-card{
+        transform:translateX(0);
+        transition:transform 0.2s ease;
+    }
+
+    .history-card .delete-history-btn{
+        display:none;
+    }
+
+    .history-card.swipe-delete .delete-history-btn{
+        display:block;
+        margin-top:10px;
+        width:100%;
+    }
+
+}
