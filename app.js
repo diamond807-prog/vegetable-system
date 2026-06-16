@@ -140,6 +140,8 @@ const amountInput = document.getElementById("amountInput");
 const remarkInput = document.getElementById("remarkInput");
 
 const historyList = document.getElementById("historyList");
+const historySearch =
+document.getElementById("historySearch");
 const historyTab = document.getElementById("historyTab");
 const productManageTab =
 document.getElementById(
@@ -1122,7 +1124,10 @@ function renderHistory(){
 
     let orders =
 [...historyOrders];
-
+const keyword =
+historySearch
+? historySearch.value.trim().toLowerCase()
+: "";
 const now =
 new Date();
 
@@ -1180,7 +1185,27 @@ if(historyFilter === "month"){
     });
 
 }
+if(keyword){
 
+    orders =
+    orders.filter(order=>{
+
+        const text =
+        [
+            order.customer,
+            order.date,
+            order.total,
+            ...order.items.map(item=>item.name),
+            ...order.items.map(item=>item.remark || "")
+        ]
+        .join(" ")
+        .toLowerCase();
+
+        return text.includes(keyword);
+
+    });
+
+}
 orders.reverse();
 
     if(orders.length === 0){
@@ -1217,15 +1242,24 @@ ${
     合計 $${order.total}
 </div>
 
-<button
-    onclick="copyHistoryReceipt('${order.id}')">
-    📋重印
-</button>
+<div class="history-actions">
+
+    <button
+        onclick="viewHistoryReceipt('${order.id}')">
+        👁️查看
+    </button>
+
+    <button
+        onclick="copyHistoryReceipt('${order.id}')">
+        📋重印
+    </button>
+
+</div>
 
 <button
-    class="delete-history-btn"
+    class="delete-history-btn hidden-delete"
     onclick="deleteHistoryOrder('${order.id}')">
-    🗑️刪除
+    🗑️刪除訂單
 </button>
 
 <div class="history-detail">
@@ -1239,6 +1273,73 @@ ${
 
         historyList.appendChild(card);
     });
+
+    let pressTimer;
+
+card.addEventListener(
+    "mousedown",
+    ()=>{
+
+        pressTimer =
+        setTimeout(()=>{
+
+            card.classList.toggle(
+                "show-delete"
+            );
+
+        },2000);
+
+    }
+);
+
+card.addEventListener(
+    "mouseup",
+    ()=>{
+
+        clearTimeout(
+            pressTimer
+        );
+
+    }
+);
+
+card.addEventListener(
+    "mouseleave",
+    ()=>{
+
+        clearTimeout(
+            pressTimer
+        );
+
+    }
+);
+
+card.addEventListener(
+    "touchstart",
+    ()=>{
+
+        pressTimer =
+        setTimeout(()=>{
+
+            card.classList.toggle(
+                "show-delete"
+            );
+
+        },2000);
+
+    }
+);
+
+card.addEventListener(
+    "touchend",
+    ()=>{
+
+        clearTimeout(
+            pressTimer
+        );
+
+    }
+);
 }
 
 
@@ -1298,6 +1399,27 @@ async function copyHistoryReceipt(id){
 
     alert(
         "出貨單已複製\n可直接貼到 Fun Print"
+    );
+
+}
+
+function viewHistoryReceipt(id){
+
+    const order =
+    historyOrders.find(
+        item => String(item.id) === String(id)
+    );
+
+    if(!order){
+
+        alert("找不到出貨單");
+
+        return;
+
+    }
+
+    alert(
+        buildReceiptText(order)
     );
 
 }
@@ -1882,7 +2004,16 @@ document
     });
 
 });
+if(historySearch){
 
+    historySearch.addEventListener(
+        "input",
+        ()=>{
+            renderHistory();
+        }
+    );
+
+}
 initCustomers();
 initProducts();
 renderRecentProducts();

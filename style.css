@@ -642,3 +642,47 @@ input{
     color:white;
 
 }
+
+.history-actions{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:10px;
+
+}
+
+.history-actions button{
+
+    flex:1;
+
+}
+
+.delete-history-btn{
+
+    margin-top:8px;
+
+    width:100%;
+
+    font-size:12px;
+
+    opacity:0.6;
+
+}
+
+
+.hidden-delete{
+
+    display:none;
+
+}
+
+.history-card.show-delete
+.hidden-delete{
+
+    display:block;
+
+    margin-top:10px;
+
+}
