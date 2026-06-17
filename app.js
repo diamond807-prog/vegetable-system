@@ -1336,28 +1336,36 @@ ${
     合計 $${order.total}
 </div>
 
-<div class="history-actions">
+<div class="history-swipe-wrap">
+
+    <div class="history-main">
+
+        <div class="history-actions">
+
+            <button
+                onclick="viewHistoryReceipt('${order.id}')">
+                👁️查看
+            </button>
+
+            <button
+                onclick="copyHistoryReceipt('${order.id}')">
+                📋重印
+            </button>
+
+        </div>
+
+        <div class="history-detail">
+            ${detailHtml}
+        </div>
+
+    </div>
 
     <button
-        onclick="viewHistoryReceipt('${order.id}')">
-        👁️查看
+        class="delete-history-btn"
+        onclick="deleteHistoryOrder('${order.id}')">
+        🗑️刪除
     </button>
 
-    <button
-        onclick="copyHistoryReceipt('${order.id}')">
-        📋重印
-    </button>
-
-</div>
-
-<button
-    class="delete-history-btn"
-    onclick="deleteHistoryOrder('${order.id}')">
-    🗑️刪除
-</button>
-
-<div class="history-detail">
-    ${detailHtml}
 </div>
         `;
 
@@ -1366,6 +1374,37 @@ ${
         });
 let touchStartX = 0;
 let touchEndX = 0;
+
+card.addEventListener("touchstart",(event)=>{
+
+    touchStartX =
+    event.changedTouches[0].screenX;
+
+});
+
+card.addEventListener("touchend",(event)=>{
+
+    touchEndX =
+    event.changedTouches[0].screenX;
+
+    const swipeWrap =
+    card.querySelector(".history-swipe-wrap");
+
+    if(!swipeWrap) return;
+
+    if(touchStartX - touchEndX > 60){
+
+        swipeWrap.classList.add("swipe-delete");
+
+    }
+
+    if(touchEndX - touchStartX > 60){
+
+        swipeWrap.classList.remove("swipe-delete");
+
+    }
+
+});
 
 card.addEventListener("touchstart",(event)=>{
 

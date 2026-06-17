@@ -717,3 +717,49 @@ input{
     }
 
 }
+
+.history-swipe-wrap{
+    position:relative;
+    overflow:hidden;
+}
+
+.history-main{
+    background:#fff;
+    position:relative;
+    z-index:2;
+    transition:transform 0.2s ease;
+}
+
+.delete-history-btn{
+    position:absolute;
+    right:0;
+    top:0;
+    bottom:0;
+    width:88px;
+    border:none;
+    background:#d9534f;
+    color:#fff;
+    font-size:14px;
+    z-index:1;
+}
+
+/* 電腦版：刪除鍵正常顯示 */
+@media (min-width: 769px){
+
+    .delete-history-btn{
+        position:static;
+        width:100%;
+        margin-top:8px;
+        opacity:0.65;
+    }
+
+}
+
+/* 手機版：左滑露出右側刪除 */
+@media (max-width: 768px){
+
+    .history-swipe-wrap.swipe-delete .history-main{
+        transform:translateX(-88px);
+    }
+
+}
