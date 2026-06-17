@@ -331,7 +331,10 @@
         <div class="modal-content">
 
             <h2 id="modalTitle">商品</h2>
-
+<select id="priceModeInput">
+    <option value="fixed">固定單價</option>
+    <option value="weight">秤重計價</option>
+</select>
             <input
                 id="qtyInput"
                 type="number"
@@ -355,7 +358,11 @@
                 <option>盒</option>
                 <option>副</option>
             </select>
-
+<input
+    id="unitPriceInput"
+    type="number"
+    placeholder="單價"
+>
             <input
                 id="amountInput"
                 type="number"
@@ -363,9 +370,14 @@
             >
 
             <input
-                id="remarkInput"
-                placeholder="備註 (例：2斤3兩)"
-            >
+    id="weightInput"
+    placeholder="重量，例：2-3 代表2斤3兩"
+>
+
+<input
+    id="remarkInput"
+    placeholder="備註"
+>
 
             <div class="modal-buttons">
 

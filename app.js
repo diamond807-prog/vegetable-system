@@ -137,6 +137,9 @@ const modalTitle = document.getElementById("modalTitle");
 const qtyInput = document.getElementById("qtyInput");
 const unitInput = document.getElementById("unitInput");
 const amountInput = document.getElementById("amountInput");
+const unitPriceInput = document.getElementById("unitPriceInput");
+const priceModeInput = document.getElementById("priceModeInput");
+const weightInput = document.getElementById("weightInput");
 const remarkInput = document.getElementById("remarkInput");
 
 const historyList = document.getElementById("historyList");
@@ -211,6 +214,73 @@ document.getElementById(
     "monthProductRanking"
 );
 
+function autoCalculateAmount(){
+
+    if(priceModeInput.value !== "fixed"){
+        return;
+    }
+
+    const qty =
+    Number(qtyInput.value);
+
+    const unitPrice =
+    Number(unitPriceInput.value);
+
+    if(!qty || !unitPrice){
+        return;
+    }
+
+    amountInput.value =
+    Math.round(qty * unitPrice);
+
+}
+
+qtyInput.addEventListener(
+    "input",
+    autoCalculateAmount
+);
+
+unitPriceInput.addEventListener(
+    "input",
+    autoCalculateAmount
+);
+
+function formatWeightInput(value){
+
+    if(!value) return "";
+
+    const text =
+    value.trim();
+
+    if(!text.includes("-")){
+        return text;
+    }
+
+    const parts =
+    text.split("-");
+
+    const jin =
+    Number(parts[0]);
+
+    const liang =
+    Number(parts[1]);
+
+    if(isNaN(jin) || isNaN(liang)){
+        return text;
+    }
+
+    if(jin === 0 && liang > 0){
+        return `${liang}兩`;
+    }
+
+    if(liang === 0){
+        return `${jin}斤`;
+    }
+
+    return `${jin}斤${liang}兩`;
+
+}
+
 function saveCurrentOrder(){
     localStorage.setItem("orderItems", JSON.stringify(orderItems));
 }
@@ -234,9 +304,9 @@ function renderOrderList(){
         row.innerHTML = `
             <div onclick="editItem(${index})" style="flex:1;cursor:pointer;">
                 <strong>${item.name}</strong>
-                ${item.remark ? `(${item.remark})` : ""}
-                　${item.qty}${item.unit}
-                　$${item.amount}
+${item.remark ? `(${item.remark})` : ""}
+　${getItemQtyText(item)}
+　$${item.amount}
             </div>
 
             <button onclick="removeItem(${index})">✕</button>
@@ -261,24 +331,48 @@ function editItem(index){
     editIndex = index;
 
     modalTitle.innerText = item.name;
-    qtyInput.value = item.qty;
-    unitInput.value = item.unit;
-    amountInput.value = item.amount;
-    remarkInput.value = item.remark || "";
+    priceModeInput.value =
+item.priceMode || "fixed";
+
+qtyInput.value =
+item.qty || "";
+
+unitInput.value =
+item.unit || "包";
+
+unitPriceInput.value =
+item.unitPrice || "";
+
+amountInput.value =
+item.amount || "";
+
+weightInput.value =
+item.weight || "";
+
+remarkInput.value =
+item.remark || "";
 
     modal.classList.add("show");
 }
 
 function addProduct(productName){
+
     currentProduct = productName;
     editIndex = null;
 
     modalTitle.innerText = productName;
+
+    priceModeInput.value = "fixed";
+
     qtyInput.value = "";
+    unitInput.value = "包";
+    unitPriceInput.value = "";
     amountInput.value = "";
+    weightInput.value = "";
     remarkInput.value = "";
 
     modal.classList.add("show");
+
 }
 
 function saveRecentProduct(productName){
@@ -1220,14 +1314,14 @@ orders.reverse();
         let detailHtml = "";
 
         order.items.forEach(item=>{
-            detailHtml += `
-                <div>
-                    ${item.name}
-                    ${item.remark ? `(${item.remark})` : ""}
-                    ${item.qty}${item.unit}
-                    ${item.amount}
-                </div>
-            `;
+          detailHtml += `
+    <div>
+        ${item.name}
+        ${item.remark ? `(${item.remark})` : ""}
+        ${getItemQtyText(item)}
+        $${item.amount}
+    </div>
+`;
         });
 
         card.innerHTML = `
@@ -1306,7 +1400,21 @@ card.addEventListener("touchend",(event)=>{
 
 }
 
+function getItemQtyText(item){
 
+    if(item.priceMode === "weight"){
+
+        if(item.qty){
+            return `${item.weight}（${item.qty}${item.unit}）`;
+        }
+
+        return item.weight;
+
+    }
+
+    return `${item.qty}${item.unit}`;
+
+}
 
 function buildReceiptText(order){
 
@@ -1328,7 +1436,7 @@ function buildReceiptText(order){
         : "";
 
         text +=
-        `${item.name}${remark} ${item.qty}${item.unit} $${item.amount}\n`;
+        `${item.name}${remark} ${getItemQtyText(item)} $${item.amount}\n`;
 
     });
 
@@ -1394,20 +1502,55 @@ document.getElementById("cancelBtn").addEventListener("click",()=>{
 });
 
 document.getElementById("saveBtn").addEventListener("click",()=>{
-    const qty = qtyInput.value;
-    const unit = unitInput.value;
-    const amount = amountInput.value;
-    const remark = remarkInput.value;
 
-    if(!qty || !amount){
-        alert("請輸入數量與金額");
-        return;
+    const priceMode =
+    priceModeInput.value;
+
+    const qty =
+    qtyInput.value;
+
+    const unit =
+    unitInput.value;
+
+    const unitPrice =
+    unitPriceInput.value;
+
+    const amount =
+    amountInput.value;
+
+    const weight =
+    formatWeightInput(
+        weightInput.value
+    );
+
+    const remark =
+    remarkInput.value;
+
+    if(priceMode === "fixed"){
+
+        if(!qty || !unitPrice){
+            alert("請輸入數量與單價");
+            return;
+        }
+
+    }
+
+    if(priceMode === "weight"){
+
+        if(!weight || !amount){
+            alert("請輸入重量與金額");
+            return;
+        }
+
     }
 
     const itemData = {
         name: currentProduct,
+        priceMode,
         qty,
         unit,
+        unitPrice,
+        weight,
         amount,
         remark
     };
@@ -1425,6 +1568,7 @@ document.getElementById("saveBtn").addEventListener("click",()=>{
 
     saveCurrentOrder();
     renderOrderList();
+
 });
 
 customerSelect.addEventListener("change",()=>{

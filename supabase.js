@@ -261,13 +261,32 @@ async function saveOrderItemsToSupabase(
     items.map(item=>{
 
         return {
-            order_id: orderId,
-            product_name: item.name,
-            qty: Number(item.qty),
-            unit: item.unit,
-            amount: Number(item.amount),
-            remark: item.remark || ""
-        };
+    order_id: orderId,
+
+    product_name:
+    item.name,
+
+    price_mode:
+    item.priceMode || "",
+
+    qty:
+    Number(item.qty) || 0,
+
+    unit:
+    item.unit || "",
+
+    unit_price:
+    Number(item.unitPrice) || 0,
+
+    weight:
+    item.weight || "",
+
+    amount:
+    Number(item.amount),
+
+    remark:
+    item.remark || ""
+};
 
     });
 
@@ -345,13 +364,30 @@ async function loadOrdersFromSupabase(){
         )
         .map(item=>{
 
-            return {
-                name:item.product_name,
-                qty:item.qty,
-                unit:item.unit,
-                amount:item.amount,
-                remark:item.remark
-            };
+         return {
+    name:item.product_name,
+
+    priceMode:
+    item.price_mode,
+
+    qty:
+    item.qty,
+
+    unit:
+    item.unit,
+
+    unitPrice:
+    item.unit_price,
+
+    weight:
+    item.weight,
+
+    amount:
+    item.amount,
+
+    remark:
+    item.remark
+};
 
         });
 
